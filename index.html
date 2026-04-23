@@ -1,0 +1,938 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>批次上架編輯器 — 九大亮點</title>
+<template id="__bundler_thumbnail" data-bg-color="#FAF7F2">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#FAF7F2"/>
+    <g transform="translate(600 400)">
+      <rect x="-260" y="-160" width="520" height="320" rx="18" fill="none" stroke="#0E1116" stroke-width="6"/>
+      <rect x="-230" y="-130" width="180" height="70" rx="10" fill="#0E1116"/>
+      <rect x="-30" y="-130" width="180" height="70" rx="10" fill="#0E1116" opacity="0.25"/>
+      <rect x="170" y="-130" width="90" height="70" rx="10" fill="#0E1116" opacity="0.25"/>
+      <rect x="-230" y="-30" width="490" height="30" rx="6" fill="#0E1116" opacity="0.15"/>
+      <rect x="-230" y="20" width="360" height="30" rx="6" fill="#0E1116" opacity="0.15"/>
+      <rect x="-230" y="70" width="420" height="30" rx="6" fill="#0E1116" opacity="0.15"/>
+      <circle cx="230" cy="115" r="32" fill="oklch(0.58 0.18 255)"/>
+      <path d="M 220 115 L 228 123 L 244 107" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="600" y="660" text-anchor="middle" font-family="ui-monospace, monospace" font-size="28" letter-spacing="6" fill="#0E1116">BATCH UPLOADER · 04.23</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="deck-stage.js"></script>
+<style>
+  :root{
+    --bg: #FAF7F2;
+    --bg-card: #FFFFFF;
+    --ink: #0E1116;
+    --ink-soft: #3B4147;
+    --ink-mute: #8A8F96;
+    --rule: #E6E1D8;
+    --rule-strong: #CFC8BA;
+    --accent: oklch(0.58 0.18 255);
+    --accent-soft: oklch(0.92 0.05 255);
+    --warn: oklch(0.60 0.18 28);
+    --warn-soft: oklch(0.94 0.05 28);
+    --ok: oklch(0.58 0.14 155);
+    --dark: #12161C;
+    --dark-2: #1B2029;
+    --dark-rule: #2A3140;
+    --sans: 'Noto Sans TC', 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#000;color:var(--ink);font-family:var(--sans);font-feature-settings:"ss01","cv11"}
+  deck-stage{ --slide-bg: var(--bg); }
+  section{
+    width:1920px;height:1080px;
+    background:var(--bg);
+    color:var(--ink);
+    position:relative;
+    overflow:hidden;
+    padding:96px 120px;
+    display:flex;flex-direction:column;
+  }
+  section.dark{ background: var(--bg); color:var(--ink); }
+  section.dark .ink-soft{color:var(--ink-soft)}
+  section.dark .rule{background:var(--rule)}
+
+  /* universal atoms */
+  .eyebrow{font-family:var(--mono);font-size:24px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:500}
+  .eyebrow .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:14px;vertical-align:3px}
+  .eyebrow.warn .dot{background:var(--warn)}
+  .kicker{font-family:var(--mono);font-size:24px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase}
+  .h0{font-size:150px;line-height:.95;letter-spacing:-.03em;font-weight:900}
+  .h1{font-size:108px;line-height:1.02;letter-spacing:-.025em;font-weight:800}
+  .h2{font-size:76px;line-height:1.04;letter-spacing:-.02em;font-weight:800}
+  .h3{font-size:52px;line-height:1.1;letter-spacing:-.01em;font-weight:700}
+  .h4{font-size:36px;line-height:1.2;font-weight:700}
+  .body{font-size:28px;line-height:1.5;color:var(--ink-soft)}
+  .body-lg{font-size:34px;line-height:1.45;color:var(--ink-soft)}
+  .small{font-size:22px;line-height:1.4;color:var(--ink-mute)}
+  .mono{font-family:var(--mono)}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .accent{color:var(--accent)}
+  .warn-c{color:var(--warn)}
+  .u{background:linear-gradient(180deg, transparent 66%, var(--accent-soft) 66%)}
+
+  /* frame header (slide number + title) */
+  .frame-head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding-bottom:24px;border-bottom:1px solid var(--rule);margin-bottom:56px;
+  }
+  .frame-head .left{display:flex;gap:20px;align-items:center}
+  .tag{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:24px;letter-spacing:.1em;text-transform:uppercase;
+    padding:8px 14px;border:1px solid var(--rule-strong);border-radius:4px;color:var(--ink-soft);
+    background:#fff;
+  }
+  .tag.accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tag.warn{background:var(--warn);color:#fff;border-color:var(--warn)}
+  .tag.ghost{background:transparent}
+
+  .foot{
+    position:absolute;left:120px;right:120px;bottom:56px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--mono);font-size:24px;color:var(--ink-mute);letter-spacing:.08em;
+  }
+
+  /* ===== cover ===== */
+  .cover{padding:0}
+  .cover .inner{flex:1;display:grid;grid-template-columns:1.25fr 1fr;gap:0}
+  .cover .left{padding:120px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--rule)}
+  .cover .right{background:var(--ink);color:#F3EFE6;padding:120px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+  .cover .right::before{
+    content:"";position:absolute;inset:-40% -20% auto auto;width:900px;height:900px;
+    background: radial-gradient(closest-side, oklch(0.58 0.18 255 / .35), transparent 70%);
+    filter:blur(20px);
+  }
+  .cover h1{font-size:132px;line-height:.95;letter-spacing:-.03em;font-weight:900;margin:0}
+  .cover h1 .sub{display:block;font-size:64px;font-weight:500;color:var(--ink-soft);margin-top:32px;letter-spacing:-.01em}
+  .cover .meta{display:flex;gap:64px}
+  .cover .meta div .k{font-family:var(--mono);font-size:24px;letter-spacing:.18em;color:var(--ink-mute);text-transform:uppercase;margin-bottom:8px}
+  .cover .meta div .v{font-size:24px;font-weight:600}
+  .cover .blurb{font-size:30px;line-height:1.5;color:#C9CDD4;max-width:540px}
+  .cover .badge{font-family:var(--mono);font-size:24px;letter-spacing:.2em;color:#7C8999;text-transform:uppercase}
+  .cover .stack{display:flex;flex-direction:column;gap:18px;z-index:1}
+  .cover .stack .line{display:flex;gap:16px;align-items:baseline;font-family:var(--mono);font-size:26px;color:#C9CDD4}
+  .cover .stack .line .n{color:var(--accent);font-weight:600;width:40px}
+  .cover .stack .line .t{color:#E8EBEF}
+
+  /* ===== section divider ===== */
+  .divider{padding:120px}
+  .divider .bignum{font-family:var(--mono);font-size:320px;line-height:.9;font-weight:600;color:rgba(255,255,255,.08);letter-spacing:-.04em}
+  .divider .content{position:absolute;left:120px;right:120px;bottom:120px}
+  .divider .content .kicker{color:#7C8999}
+  .divider .content h2{font-size:128px;line-height:1;letter-spacing:-.03em;font-weight:800;margin:24px 0 0;color:#F3EFE6}
+  .divider .content h2 em{font-style:normal;color:var(--accent)}
+
+  /* ===== layout utilities ===== */
+  .cols-2{display:grid;grid-template-columns:1fr 1fr;gap:80px;flex:1;min-height:0}
+  .cols-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;flex:1;min-height:0}
+  .cols-5-7{display:grid;grid-template-columns:5fr 7fr;gap:80px;flex:1;min-height:0}
+  .cols-7-5{display:grid;grid-template-columns:7fr 5fr;gap:80px;flex:1;min-height:0}
+  .cols-4-8{display:grid;grid-template-columns:4fr 8fr;gap:80px;flex:1;min-height:0}
+
+  .card{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:40px;display:flex;flex-direction:column;gap:20px}
+  .card .idx{font-family:var(--mono);font-size:18px;letter-spacing:.1em;color:var(--ink-mute)}
+  .card h4{margin:0;font-size:34px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+  .card p{margin:0;font-size:22px;line-height:1.5;color:var(--ink-soft)}
+
+  /* step ruler */
+  .steps{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .step{display:grid;grid-template-columns:80px 1fr 260px;align-items:center;padding:28px 0;border-bottom:1px solid var(--rule)}
+  .step:last-child{border-bottom:none}
+  .step .n{font-family:var(--mono);font-size:24px;color:var(--ink-mute)}
+  .step .t{font-size:32px;font-weight:600}
+  .step .tail{font-family:var(--mono);font-size:24px;color:var(--warn);text-align:right}
+
+  /* before/after compare */
+  .compare{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;align-items:stretch}
+  .compare .col{padding:48px;border:1px solid var(--rule);border-radius:14px;background:#fff;display:flex;flex-direction:column;gap:22px}
+  .compare .col.before{background:#FDF5F2;border-color:oklch(0.88 0.06 28)}
+  .compare .col.after{background:#F2F6FF;border-color:oklch(0.88 0.06 255)}
+  .compare .arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);color:var(--ink-mute);font-size:36px}
+  .compare h5{margin:0;font-family:var(--mono);font-size:18px;letter-spacing:.14em;text-transform:uppercase}
+  .compare .before h5{color:var(--warn)}
+  .compare .after h5{color:var(--accent)}
+  .compare .big{font-size:48px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+  .compare ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+  .compare li{font-size:22px;line-height:1.45;color:var(--ink-soft);padding-left:24px;position:relative}
+  .compare li::before{content:"—";position:absolute;left:0;color:var(--ink-mute)}
+
+  /* pricing table */
+  .rules{border:1px solid var(--rule);border-radius:14px;overflow:hidden;background:#fff}
+  .rules .row{display:grid;grid-template-columns:1.4fr 1fr 1fr;padding:26px 32px;border-bottom:1px solid var(--rule);align-items:center}
+  .rules .row:last-child{border-bottom:none}
+  .rules .row.head{background:#F5F1E8;font-family:var(--mono);font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);padding:16px 32px}
+  .rules .row .a{font-size:26px;font-weight:600}
+  .rules .row .b{font-family:var(--mono);font-size:30px;color:var(--accent);font-weight:600}
+  .rules .row .c{font-family:var(--mono);font-size:22px;color:var(--ink-mute)}
+
+  .callout{
+    background:#fff;border:1px solid var(--rule);border-radius:12px;padding:28px 32px;
+    display:flex;gap:20px;align-items:baseline;
+  }
+  .callout .lb{font-family:var(--mono);font-size:24px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+
+  /* image frames */
+  .shot{
+    background:#fff;border:1px solid var(--rule);border-radius:10px;overflow:hidden;
+    box-shadow: 0 2px 0 rgba(0,0,0,.02), 0 30px 60px -30px rgba(20,25,35,.18);
+    position:relative;
+  }
+  .shot img{display:block;width:100%;height:auto}
+  .shot .chrome{display:flex;gap:8px;padding:12px 16px;background:#F5F3EE;border-bottom:1px solid var(--rule)}
+  .shot .chrome i{width:12px;height:12px;border-radius:50%;background:#D7D2C6;display:block}
+  .shot .chrome i:nth-child(1){background:#E58B86}
+  .shot .chrome i:nth-child(2){background:#E6C36A}
+  .shot .chrome i:nth-child(3){background:#88C28B}
+  .shot .chrome .url{margin-left:16px;font-family:var(--mono);font-size:14px;color:var(--ink-mute);letter-spacing:.05em}
+
+  /* annotation callouts for images */
+  .pin{
+    position:absolute;background:var(--accent);color:#fff;
+    font-family:var(--mono);font-size:16px;letter-spacing:.08em;font-weight:600;
+    padding:6px 10px;border-radius:4px;
+    box-shadow:0 4px 12px rgba(37,82,179,.3);
+  }
+  .anno{
+    position:absolute;background:#fff;border:1px solid var(--accent);
+    border-radius:8px;padding:14px 18px;max-width:320px;
+    font-size:20px;line-height:1.35;color:var(--ink);
+    box-shadow:0 20px 40px -20px rgba(20,25,35,.3);
+  }
+  .anno .lb{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--accent);margin-bottom:6px;text-transform:uppercase}
+
+  /* placeholder (striped) */
+  .placeholder{
+    background:
+      repeating-linear-gradient(-45deg, #F2EEE4 0 12px, #EBE6DA 12px 24px);
+    border:1px dashed var(--rule-strong);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);color:var(--ink-mute);font-size:20px;letter-spacing:.1em;text-transform:uppercase;
+  }
+
+  /* pill list */
+  .pills{display:flex;flex-wrap:wrap;gap:14px}
+  .pill{border:1px solid var(--rule-strong);padding:12px 20px;border-radius:999px;font-size:22px;background:#fff;color:var(--ink-soft)}
+  .pill.strong{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* stat */
+  .stat{display:flex;flex-direction:column;gap:8px}
+  .stat .v{font-family:var(--mono);font-size:120px;font-weight:700;line-height:.95;letter-spacing:-.03em;color:var(--ink)}
+  .stat .k{font-size:22px;color:var(--ink-mute);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase}
+  .stat.sm .v{font-size:72px}
+
+  /* code block */
+  .code{
+    background:#12161C;color:#E8EBEF;border-radius:10px;padding:28px 32px;
+    font-family:var(--mono);font-size:22px;line-height:1.6;overflow:hidden;
+    white-space:pre-wrap;word-break:break-all;
+  }
+  .code .c-gray{color:#7C8999}
+  .code .c-blue{color:#6FA9FF}
+  .code .c-orange{color:#E6A365}
+  .code .c-pink{color:#E38DC5}
+  .code .c-green{color:#9CCB83}
+
+  /* branch diagram */
+  .branch{
+    position:relative;padding:40px 0;
+  }
+  .branch .line{position:absolute;height:6px;background:var(--rule-strong);border-radius:3px;left:0;right:0;top:80px}
+  .branch .main{position:absolute;height:6px;background:var(--accent);border-radius:3px;left:0;right:0;top:80px}
+
+  /* fourway grid */
+  .four{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:24px}
+  .pform{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:30px;display:flex;flex-direction:column;gap:14px;min-height:200px}
+  .pform .name{font-size:30px;font-weight:700;letter-spacing:-.01em}
+  .pform .fmt{font-family:var(--mono);font-size:24px;color:var(--ink-mute);letter-spacing:.06em}
+  .pform .tag{align-self:flex-start;padding:4px 10px;font-size:24px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);letter-spacing:.08em}
+
+  /* summary table */
+  .summary{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--rule)}
+  .summary th,.summary td{text-align:left;padding:20px 24px;border-bottom:1px solid var(--rule);font-size:22px}
+  .summary th{background:#F5F1E8;font-family:var(--mono);font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute);font-weight:500}
+  .summary td:first-child{font-weight:700;font-size:24px;width:280px}
+  .summary tr:last-child td{border-bottom:none}
+
+  /* arrow */
+  .pipeline{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center;gap:0}
+  .pipeline .box{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:28px;text-align:center}
+  .pipeline .box .t{font-size:24px;font-weight:700}
+  .pipeline .box .s{font-family:var(--mono);font-size:24px;color:var(--ink-mute);margin-top:6px;letter-spacing:.08em}
+  .pipeline .arr{text-align:center;font-family:var(--mono);font-size:36px;color:var(--ink-mute)}
+
+  /* checklist */
+  .checklist{display:flex;flex-direction:column;gap:18px}
+  .checklist .c{display:flex;gap:18px;align-items:baseline;font-size:26px;color:var(--ink-soft)}
+  .checklist .c::before{content:"✓";color:var(--accent);font-weight:700;font-family:var(--mono);font-size:28px}
+  .checklist .c.no::before{content:"✗";color:var(--warn)}
+
+  /* highlight chip on images */
+  .img-wrap{position:relative}
+  .highlight-box{position:absolute;border:3px solid var(--accent);border-radius:6px;box-shadow:0 0 0 4px rgba(37,82,179,.15);pointer-events:none}
+  .highlight-box.warn{border-color:var(--warn);box-shadow:0 0 0 4px rgba(200,80,40,.15)}
+
+  /* subtle grid lines on dark */
+  .dark-grid::after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 120px 120px;
+  }
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+<!-- ========== 01 COVER ========== -->
+<section class="cover" data-screen-label="01 Cover">
+  <div class="inner" style="flex:1;display:grid;grid-template-columns:1.25fr 1fr">
+    <div class="left">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>AI 分享會 · 2026.04.23</div>
+        <h1 style="margin-top:48px">批次上架<br>編輯器<span class="sub">一套工具，同時搞定四個平台。</span></h1>
+      </div>
+      <div class="meta">
+        <div><div class="k">Version</div><div class="v">v1.0.0 · um8ma3rs</div></div>
+        <div><div class="k">Platforms</div><div class="v">蝦皮 · WACA電商1 · WACA電商2 · 91APP</div></div>
+        <div><div class="k">Runtime</div><div class="v">Docker · auto-update</div></div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="badge">One tool · four platforms</div>
+      <div style="display:flex;flex-direction:column;gap:32px;z-index:1">
+        <div class="h2" style="color:#F3EFE6;font-size:92px;line-height:1">九個<br>亮點<br><span style="color:var(--accent)">，逐一展開。</span></div>
+        <div style="font-family:var(--mono);font-size:22px;color:#8C96A6;letter-spacing:.14em">SHOPEE · WACA · 91APP</div>
+      </div>
+      <div class="blurb">從零開始，一個人設計架構、寫程式、測試、部署、維護——<br>根據實際業務一點一點刻出來的。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 02 TOC ========== -->
+<section data-screen-label="02 Agenda">
+  <div class="frame-head">
+    <div class="left"><span class="tag">Agenda</span><span class="eyebrow"><span class="dot"></span>九大亮點 · 目錄</span></div>
+    <div class="kicker">02 / 15</div>
+  </div>
+
+  <div style="flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;align-content:center">
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 01</div><h4>一鍵四平台匯出</h4><p>蝦皮 / WACA電商1 / WACA電商2 / 91APP — 一次產出四份檔案。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 02</div><h4>蝦皮定價機器人</h4><p>分段加成規則全自動套用，結尾自動進位到 0 / 5 / 9。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 03</div><h4>勾選就能合體</h4><p>多筆單規格 →「合併為多規格」按一下完成。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 04</div><h4>批次改分類</h4><p>一筆設好，幾百筆四平台同步，一秒套用。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 05</div><h4>圖片自動對號入座</h4><p>750px 規格化、FTP 上傳、ZIP 打包一條龍。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 06</div><h4>HTML 編輯器 + 翻譯</h4><p>所見即所得編輯，免費翻譯 API 產出日文 / 簡中。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 07</div><h4>官方改格式十分鐘跟上</h4><p>架構解耦，一行程式 + 一個模板檔就搞定。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 08</div><h4>Docker 啟動即更新</h4><p>打開電腦就是最新版，零手動操作。</p></a>
+    <a style="text-decoration:none;color:inherit" class="card"><div class="idx">SPOTLIGHT · 09</div><h4>測試不影響正式</h4><p>新功能在 feature 分支隔離驗證，穩定後才合併。</p></a>
+  </div>
+
+  <div class="foot"><span class="mono">AGENDA</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 03 THE PROBLEM ========== -->
+<section data-screen-label="02 Problem">
+  <div class="frame-head">
+    <div class="left"><span class="tag warn">Before</span><span class="eyebrow warn"><span class="dot"></span>你以為上架商品很簡單？</span></div>
+    <div class="kicker">00 / Problem</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:32px">
+      <div class="h2">一款商品，<br>四個後台，<br><span class="warn-c">重複做四次。</span></div>
+      <div class="body-lg">原有流程「複製既有賣場再修改」——但更危險。<br>舊欄位沒改到、舊圖片沒換掉、舊描述留著，上架才發現賣錯商品。</div>
+      <div class="callout" style="border-color:oklch(0.85 0.08 28);background:#FDF5F2">
+        <div class="lb" style="color:var(--warn)">Question</div>
+        <div class="body" style="color:var(--ink);font-size:30px">手動上架 <b>50 款</b>，你要花多少小時？</div>
+      </div>
+    </div>
+
+    <div class="steps" style="align-self:center">
+      <div class="step"><span class="n">01</span><span class="t">登入蝦皮後台，一格一格填</span><span class="tail"></span></div>
+      <div class="step"><span class="n">02</span><span class="t">登入 WACA 電商1，重複一次</span><span class="tail"></span></div>
+      <div class="step"><span class="n">03</span><span class="t">登入 WACA 電商2，重複一次</span><span class="tail"></span></div>
+      <div class="step"><span class="n">04</span><span class="t">登入 91APP，重複一次</span><span class="tail"></span></div>
+      <div class="step"><span class="n">05</span><span class="t">圖片上傳到四個地方</span><span class="tail">各種格式</span></div>
+      <div class="step"><span class="n">06</span><span class="t">套用蝦皮特殊定價規則</span><span class="tail">易算錯</span></div>
+      <div class="step"><span class="n">07</span><span class="t">逐欄位確認沒有填錯</span><span class="tail">易遺漏</span></div>
+    </div>
+  </div>
+
+  <div class="foot"><span>AI分享會 · 04.23</span><span>批次上架編輯器 — 九大亮點</span></div>
+</section>
+
+<!-- ========== 03 SOLUTION OVERVIEW ========== -->
+<section data-screen-label="03 Mission">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Mission</span><span class="eyebrow"><span class="dot"></span>這套系統的任務</span></div>
+    <div class="kicker">03 / 15</div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:80px">
+    <div class="h0" style="max-width:1500px">
+      把這些事情壓縮成<br>
+      <span class="accent">「按一個鍵」。</span>
+    </div>
+
+    <div class="pipeline">
+      <div class="box">
+        <div class="t">匯入商品資料</div>
+        <div class="s">Google Sheet · Excel</div>
+      </div>
+      <div class="arr" style="color:var(--accent)">→</div>
+      <div class="box" style="background:var(--accent);border-color:var(--accent);color:#fff">
+        <div class="t">按下匯出</div>
+        <div class="s" style="color:rgba(255,255,255,.8)">One click</div>
+      </div>
+      <div class="arr" style="color:var(--accent)">→</div>
+      <div class="box">
+        <div class="t">四份檔案同時下載</div>
+        <div class="s">蝦皮 / WACA電商1 / WACA電商2 / 91APP</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span>AI分享會 · 04.23</span><span>批次上架編輯器 — 九大亮點</span></div>
+</section>
+
+<!-- ========== 04 SPOTLIGHT 01 — ONE CLICK FOUR PLATFORMS ========== -->
+<section data-screen-label="04 Spotlight 01 — 一鍵四平台">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 01</span><span class="eyebrow"><span class="dot"></span>一鍵四平台匯出</span></div>
+    <div class="kicker">04 / 22</div>
+  </div>
+
+  <div class="cols-7-5">
+    <div style="display:flex;flex-direction:column;gap:40px">
+      <div class="h2">四份資料<br>同時產出，<br>不用多按第二下。</div>
+      <div class="body-lg">每個平台的規則全部寫死在系統裡——<br>欄位名稱不同、格式不同、連定價規則都不同，你不用記。</div>
+
+      <div class="four">
+        <div class="pform">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none">Shopee</span>
+          <div class="name">蝦皮</div>
+          <div class="fmt">.xlsx 官方模板<br>112 欄位自動填</div>
+        </div>
+        <div class="pform">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none">WACA</span>
+          <div class="name">電商1</div>
+          <div class="fmt">獨立欄位格式<br>自有圖片處理</div>
+        </div>
+        <div class="pform">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none">WACA</span>
+          <div class="name">電商2</div>
+          <div class="fmt">獨立分類樹<br>品牌色：綠色主題</div>
+        </div>
+        <div class="pform">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none">91APP</span>
+          <div class="name">91APP</div>
+          <div class="fmt">Excel + 圖片 ZIP<br>打包下載</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-wrap" style="align-self:center">
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:8px;padding:16px 22px;margin-bottom:16px;display:flex;gap:18px;align-items:baseline">
+        <span class="mono" style="font-size:22px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase">Export</span>
+        <span class="body" style="font-size:22px;color:var(--ink)">按下 Export 選單，四選單同時匯出；或單獨匯出任一平台做測試輸出。</span>
+      </div>
+      <div class="shot">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">batch-uploader · v1.0.0</span></div>
+        <img src="assets/spotlight_01.png" alt="匯出下拉選單：四個平台同時匯出">
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">01 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 05 SPOTLIGHT 02 — PRICING BOT ========== -->
+<section data-screen-label="05 Spotlight 02 — 蝦皮定價機器人">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 02</span><span class="eyebrow"><span class="dot"></span>蝦皮定價機器人</span></div>
+    <div class="kicker">05 / 22</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:32px">
+      <div class="h2">不是亂加價，<br>是<span style="color:var(--accent)">有邏輯</span>的漲。</div>
+      <div class="body-lg">蝦皮的定價規則跟其他平台不一樣，每一檔價格區間的加成方式都不同。寫在程式裡，每筆自動套用，<b>不會算錯，也不會忘記</b>。</div>
+      <div class="callout">
+        <div class="lb">Note</div>
+        <div class="body" style="color:var(--ink);font-size:24px">規則如果要調整——改一個地方，全部商品立刻跟著更新。</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div class="rules">
+        <div class="row head" style="padding:12px 28px"><div>原售價區間</div><div>加成方式</div><div>範例</div></div>
+        <div class="row" style="padding:18px 28px"><div class="a" style="font-size:22px">&lt; A</div><div class="b" style="font-size:26px">× 1.??</div><div class="c" style="font-size:20px">— → —</div></div>
+        <div class="row" style="padding:18px 28px"><div class="a" style="font-size:22px">A – B</div><div class="b" style="font-size:26px">× 1.??</div><div class="c" style="font-size:20px">— → —</div></div>
+        <div class="row" style="padding:18px 28px"><div class="a" style="font-size:22px">B – C</div><div class="b" style="font-size:26px">+ ???</div><div class="c" style="font-size:20px">— → —</div></div>
+        <div class="row" style="padding:18px 28px"><div class="a" style="font-size:22px">&gt; C</div><div class="b" style="font-size:26px">+ ???</div><div class="c" style="font-size:20px">— → —</div></div>
+        <div class="row" style="background:#FBF8EF;padding:18px 28px"><div class="a" style="font-size:22px">最後進位</div><div class="b" style="color:var(--ink);font-size:24px">尾數 → 指定結尾</div><div class="c" style="font-size:20px">— → —</div></div>
+      </div>
+
+      <div class="code" style="padding:22px 28px;font-size:20px;line-height:1.5">
+<span class="c-gray">// 實際執行範例 — 原價 X</span>
+<span class="c-blue">const</span> base = <span class="c-orange">X</span>;                            <span class="c-gray">// input</span>
+<span class="c-blue">const</span> marked = applyRule(base);          <span class="c-gray">// 依區間套用規則</span>
+<span class="c-blue">const</span> final  = roundToTail(marked);      <span class="c-gray">// 進位到指定尾數</span>
+<span class="c-pink">shopee</span>.price = final;                    <span class="c-green">// ✓ 定價完成</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">02 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 06 SPOTLIGHT 03 — MERGE INTO MULTI-SKU ========== -->
+<section data-screen-label="06 Spotlight 03 — 勾選就能合體">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 03</span><span class="eyebrow"><span class="dot"></span>勾選就能合體</span></div>
+    <div class="kicker">06 / 22</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="h2" style="font-size:68px">多款單規格，<br>一鍵變<br><span class="accent">一個多規格</span>商品。</div>
+      <div class="body" style="font-size:26px">同一款模型有 A / B / C 版，合成一筆讓買家在同一頁選版本——四個平台都支援。</div>
+
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:24px 28px;display:flex;flex-direction:column;gap:14px">
+        <div class="eyebrow"><span class="dot"></span>系統自動處理</div>
+        <div class="checklist" style="gap:12px">
+          <div class="c" style="font-size:22px">三筆規格自動對應為下拉選項</div>
+          <div class="c" style="font-size:22px">各規格的 SKU / 售價 / 庫存保留</div>
+          <div class="c" style="font-size:22px">匯出時四平台同步多規格格式</div>
+          <div class="c" style="font-size:22px">不用手動再調整任何一格</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-wrap" style="align-self:center">
+      <div class="shot" style="max-width:440px;margin:0 auto;max-height:820px;overflow:hidden">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">product-list · multi-select</span></div>
+        <img src="assets/spotlight_03.png" alt="商品列表勾選四筆 SWIFT Sport 合併為多規格" style="max-height:780px;object-fit:cover;object-position:top">
+      </div>
+      <div class="anno" style="right:-40px;top:80px">
+        <div class="lb">Action</div>
+        勾選 4 筆 SWIFT Sport，按下「合併為多規格」——
+      </div>
+      <div class="anno" style="right:-40px;top:260px">
+        <div class="lb">Result</div>
+        系統把 冠軍黃 / 金屬銀 / 珍珠白 / 金屬藍 合為單一商品的四個選項。
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">03 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 07 SPOTLIGHT 04 — BATCH CATEGORY ========== -->
+<section data-screen-label="07 Spotlight 04 — 批次改分類">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 04</span><span class="eyebrow"><span class="dot"></span>批次改分類</span></div>
+    <div class="kicker">07 / 22</div>
+  </div>
+
+  <div class="cols-7-5">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div class="h2">100 個商品，<br><span class="num accent">1 秒</span>全部改好。</div>
+      <div class="body-lg">一款商品要同時維護四個分類（蝦皮、WACA電商1、WACA電商2、91APP）。<br>設好第一筆，勾選全部，一鍵同步——幾百筆都是一秒的事。</div>
+
+      <div class="compare">
+        <div class="col before" style="padding:28px;gap:12px">
+          <h5>Before — 一筆一筆改</h5>
+          <ul>
+            <li>改完蝦皮再改 WACA，再改 91APP</li>
+            <li>切換頁面、等待載入、確認儲存</li>
+            <li>漏改一個平台就錯位</li>
+          </ul>
+        </div>
+        <div class="arrow">→</div>
+        <div class="col after" style="padding:28px;gap:12px">
+          <h5>After — 同步商店分類</h5>
+          <ul>
+            <li>以第一筆為基準一次套用</li>
+            <li>四個平台同步</li>
+            <li>勾幾筆就同步幾筆</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="lb">Action</div>
+        <div class="body" style="color:var(--ink);font-size:22px">在清單勾選多筆商品 → 按下「同步商店分類」→ 完成。</div>
+      </div>
+    </div>
+
+    <div class="img-wrap" style="align-self:center">
+      <div class="shot" style="max-width:400px;margin:0 auto;max-height:700px;overflow:hidden">
+        <div class="chrome"><i></i><i></i><i></i><span class="url">product-list · multi-select</span></div>
+        <img src="assets/spotlight_03.png" alt="商品列表多筆勾選" style="max-height:660px;object-fit:cover;object-position:top">
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">04 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 08 SPOTLIGHT 05 — IMAGES ========== -->
+<section data-screen-label="08 Spotlight 05 — 圖片自動對號入座">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 05</span><span class="eyebrow"><span class="dot"></span>圖片自動對號入座</span></div>
+    <div class="kicker">08 / 22</div>
+  </div>
+
+  <div class="cols-4-8">
+    <div style="display:flex;flex-direction:column;gap:28px;justify-content:center">
+      <div class="h2">上傳一次，<br>四個平台<br><span class="accent">各取所需</span>。</div>
+      <div class="body-lg">每個平台要的格式完全不同，處理起來像在走迷宮——這套系統把迷宮壓平。</div>
+      <div class="stat sm"><div class="v">20 張 / 款</div><div class="k">Max per product</div></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:28px;justify-content:center">
+      <!-- pipeline -->
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:36px;display:flex;flex-direction:column;gap:24px">
+        <div class="eyebrow"><span class="dot"></span>Step 1 — 統一規格</div>
+        <div style="display:grid;grid-template-columns:1fr 60px 1fr;gap:0;align-items:center">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="placeholder" style="width:100px;height:100px">ANY</div>
+            <div>
+              <div class="body" style="color:var(--ink);font-size:24px;font-weight:600">原始圖片</div>
+              <div class="small">webp · png · gif · jpg… 不限格式</div>
+            </div>
+          </div>
+          <div class="arr" style="text-align:center;font-family:var(--mono);font-size:32px;color:var(--ink-mute)">→</div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <div class="placeholder" style="width:100px;height:100px;background:repeating-linear-gradient(-45deg, #E8F0FF 0 12px, #DDE8FF 12px 24px);border-color:var(--accent);color:var(--accent)">750</div>
+            <div>
+              <div class="body" style="color:var(--ink);font-size:24px;font-weight:600">750px 寬 · JPG</div>
+              <div class="small">不足補白邊 · 統一格式</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="four" style="grid-template-columns:1fr 1fr">
+        <div class="pform" style="gap:10px">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none;align-self:flex-start">WACA / 蝦皮</span>
+          <div class="name" style="font-size:26px">需要 圖片網址</div>
+          <div class="fmt">FTP 上傳圖床 → 建立「商品編號 → 網址」對應表 → 匯出時自動填入</div>
+        </div>
+        <div class="pform" style="gap:10px">
+          <span class="tag" style="background:var(--accent-soft);color:var(--accent);border:none;align-self:flex-start">91APP</span>
+          <div class="name" style="font-size:26px">需要 ZIP 壓縮檔</div>
+          <div class="fmt">系統自動打包成 ZIP 一起下載，平台直接吃</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="lb">Outcome</div>
+        <div class="body" style="color:var(--ink);font-size:24px">上傳一次，四個平台各拿各需要的格式——不用複製，不會貼錯。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">05 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 09 SPOTLIGHT 06 — RICH TEXT ========== -->
+<section data-screen-label="09 Spotlight 06 — HTML 編輯器 + 翻譯">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 06</span><span class="eyebrow"><span class="dot"></span>HTML 編輯器 + 免費翻譯一條龍</span></div>
+    <div class="kicker">09 / 22</div>
+  </div>
+
+  <div class="cols-5-7" style="gap:60px;padding-bottom:60px">
+    <!-- LEFT: copy + ability cards -->
+    <div style="display:flex;flex-direction:column;gap:28px;justify-content:center">
+      <div class="h2">你不可能手寫的格式，<br>系統<span class="accent">幫你寫好</span>。</div>
+      <div class="body-lg">各平台的商品說明欄位，底層要求的是 <b>HTML 語法</b>——一般人看不懂，更不可能手打。系統整合富文字編輯器，像打 Word 一樣編輯，背後自動轉成正確 HTML。</div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card" style="padding:16px 24px;gap:4px"><div class="idx" style="font-size:16px">ABILITY · 01 · 文字樣式自由調整</div><p style="font-size:20px;margin:0">字體大小、顏色、粗體、對齊——全部可視化。</p></div>
+        <div class="card" style="padding:16px 24px;gap:4px"><div class="idx" style="font-size:16px">ABILITY · 02 · 品牌色自動切換</div><p style="font-size:20px;margin:0">電商2綠色主題、電商1預設色；輸出自動統一，不會貼錯。</p></div>
+        <div class="card" style="padding:16px 24px;gap:4px;background:var(--accent);color:#fff;border-color:var(--accent)"><div class="idx" style="color:rgba(255,255,255,.85);font-size:16px">ABILITY · 03 · 日文 / 簡中 翻譯 API</div><p style="font-size:20px;color:rgba(255,255,255,.95);margin:0">一鍵翻譯整份商品說明，完全不花錢——用免費額度。</p></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: before → after stacked -->
+    <div style="display:flex;flex-direction:column;gap:14px;justify-content:center;min-height:0;overflow:hidden">
+      <div style="display:flex;flex-direction:column;gap:6px;min-height:0">
+        <div class="mono" style="font-size:18px;letter-spacing:.14em;color:var(--warn);text-transform:uppercase">Before — 如果讓你直接填</div>
+        <div class="shot" style="max-height:340px">
+          <div class="chrome"><i></i><i></i><i></i><span class="url">詳細說明 · raw HTML</span></div>
+          <img src="assets/spotlight_06_output.png" alt="原始 HTML 原始碼" style="max-height:300px;object-fit:cover;object-position:top">
+        </div>
+      </div>
+      <div style="text-align:center;font-family:var(--mono);font-size:20px;color:var(--accent);letter-spacing:.2em">↓ TRANSFORM ↓</div>
+      <div style="display:flex;flex-direction:column;gap:6px;min-height:0">
+        <div class="mono" style="font-size:18px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase">After — 在系統裡所見即所得</div>
+        <div class="shot" style="max-height:340px">
+          <div class="chrome"><i></i><i></i><i></i><span class="url">Rich Text Editor</span></div>
+          <img src="assets/spotlight_06_ui.png" alt="富文字編輯器介面" style="max-height:300px;object-fit:cover;object-position:top">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" style="bottom:24px"><span class="mono">06 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 10 SPOTLIGHT 07 — SPEC CHANGES ========== -->
+<section data-screen-label="10 Spotlight 07 — 十分鐘跟上">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 07</span><span class="eyebrow"><span class="dot"></span>官方改格式？十分鐘內跟上</span></div>
+    <div class="kicker">10 / 22</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:28px;justify-content:center">
+      <div class="h2">不是靠運氣，<br>是靠<span class="accent">架構</span>。</div>
+      <div class="body-lg">這次蝦皮官方把「交通工具類型」欄位拿掉，從 113 欄縮成 112 欄。</div>
+
+      <div style="display:flex;gap:40px;align-items:center;padding:32px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)">
+        <div class="stat sm"><div class="v" style="color:var(--warn);text-decoration:line-through 6px var(--warn)">113</div><div class="k">Before</div></div>
+        <div class="mono" style="font-size:40px;color:var(--ink-mute)">→</div>
+        <div class="stat sm"><div class="v" style="color:var(--accent)">112</div><div class="k">After</div></div>
+        <div style="margin-left:auto" class="stat sm"><div class="v" style="color:var(--ink)">~10 min</div><div class="k">Fix time</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:24px;justify-content:center">
+      <div class="eyebrow"><span class="dot"></span>修改動作清單</div>
+      <div class="steps" style="background:#fff">
+        <div class="step" style="grid-template-columns:80px 1fr 200px">
+          <span class="n">01</span><span class="t">改一行程式碼（欄位清單）</span><span class="tail" style="color:var(--accent)">1 LOC</span>
+        </div>
+        <div class="step" style="grid-template-columns:80px 1fr 200px">
+          <span class="n">02</span><span class="t">換一個 Excel 模板檔案</span><span class="tail" style="color:var(--accent)">1 file</span>
+        </div>
+        <div class="step" style="grid-template-columns:80px 1fr 200px">
+          <span class="n">03</span><span class="t">上傳，全部更新完畢</span><span class="tail" style="color:var(--accent)">done</span>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="lb">Why</div>
+        <div class="body" style="color:var(--ink);font-size:24px">每個平台的欄位定義、模板檔案、資料填入邏輯各自獨立——動一個不影響其他。</div>
+      </div>
+
+      <div class="pills">
+        <span class="pill strong">架構決定維護成本</span>
+        <span class="pill">各司其職</span>
+        <span class="pill">無副作用</span>
+        <span class="pill">成本可控</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">07 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 11 SPOTLIGHT 08 — DOCKER ========== -->
+<section data-screen-label="11 Spotlight 08 — Docker 自動更新">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 08</span><span class="eyebrow"><span class="dot"></span>Docker 啟動即更新</span></div>
+    <div class="kicker">11 / 15</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:32px;justify-content:center">
+      <div class="h1">打開電腦，<br>就是<span class="accent">最新版</span>。</div>
+      <div class="body-lg">Docker 就像一個「隨身帶著完整環境的盒子」，不管在哪台電腦打開，跑起來都一模一樣。<br>而且——每次啟動，它會自動抓最新的程式版本。</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:24px;justify-content:center">
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:36px;display:flex;flex-direction:column;gap:24px">
+        <div class="eyebrow"><span class="dot"></span>User flow · 每一次</div>
+        <div style="display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:0">
+          <div style="display:flex;flex-direction:column;gap:10px;padding:24px;background:var(--paper);border-radius:10px;border:1px solid var(--rule)">
+            <div class="mono" style="color:var(--accent);font-size:18px;letter-spacing:.1em">ACTION</div>
+            <div style="font-size:32px;font-weight:700;color:var(--ink)">打開 Docker</div>
+          </div>
+          <div style="text-align:center;font-family:var(--mono);font-size:28px;color:var(--accent)">→</div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding:24px;background:var(--paper);border-radius:10px;border:1px solid var(--rule)">
+            <div class="mono" style="color:var(--accent);font-size:18px;letter-spacing:.1em">RESULT</div>
+            <div style="font-size:32px;font-weight:700;color:var(--ink)">開始用 · 最新版</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cols-3" style="gap:18px">
+        <div class="card">
+          <div class="idx">CASE · 01</div>
+          <h4>修了一個 bug？</h4>
+          <p>隔天開機自動修好。</p>
+        </div>
+        <div class="card">
+          <div class="idx">CASE · 02</div>
+          <h4>加了新功能？</h4>
+          <p>隔天開機自動有。</p>
+        </div>
+        <div class="card">
+          <div class="idx">CASE · 03</div>
+          <h4>要去哪裡更新？</h4>
+          <p>不需要問——永遠只有「打開」這個動作。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">08 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 12 SPOTLIGHT 09 — FEATURE BRANCH ========== -->
+<section data-screen-label="12 Spotlight 09 — 測試不影響正式">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Spotlight 09</span><span class="eyebrow"><span class="dot"></span>測試不影響正式</span></div>
+    <div class="kicker">12 / 22</div>
+  </div>
+
+  <div class="cols-5-7">
+    <div style="display:flex;flex-direction:column;gap:32px;justify-content:center">
+      <div class="h2">新功能在<br><span class="accent">平行宇宙</span>裡先跑。</div>
+      <div class="body-lg">系統會開一條獨立的「測試軌道」（feature 分支），跟正式版完全隔離；<br>驗證沒問題才合併進主版本，Docker 啟動時自動拿到。</div>
+      <div class="callout">
+        <div class="lb">Outcome</div>
+        <div class="body" style="color:var(--ink);font-size:24px">這就是為什麼幾乎不會有「昨天還好好的，今天突然壞掉」。</div>
+      </div>
+    </div>
+
+    <!-- git-branch diagram -->
+    <div style="align-self:center;width:100%">
+      <svg viewBox="0 0 800 500" style="width:100%;height:auto;display:block">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#0E1116"/>
+          </marker>
+        </defs>
+        <!-- main branch -->
+        <line x1="60" y1="250" x2="740" y2="250" stroke="#0E1116" stroke-width="4"/>
+        <text x="60" y="235" font-family="JetBrains Mono" font-size="16" fill="#8A8F96" letter-spacing="2">MAIN · PRODUCTION</text>
+        <circle cx="120" cy="250" r="14" fill="#0E1116"/>
+        <circle cx="440" cy="250" r="14" fill="#0E1116"/>
+        <circle cx="660" cy="250" r="14" fill="#0E1116"/>
+
+        <!-- feature branch -->
+        <path d="M 180 250 C 220 250, 240 120, 300 120 L 400 120 C 440 120, 440 250, 480 250" fill="none" stroke="oklch(0.58 0.18 255)" stroke-width="4" stroke-dasharray="0"/>
+        <text x="280" y="100" font-family="JetBrains Mono" font-size="16" fill="oklch(0.58 0.18 255)" letter-spacing="2">FEATURE · ISOLATED</text>
+        <circle cx="300" cy="120" r="12" fill="oklch(0.58 0.18 255)"/>
+        <circle cx="350" cy="120" r="12" fill="oklch(0.58 0.18 255)"/>
+        <circle cx="400" cy="120" r="12" fill="oklch(0.58 0.18 255)"/>
+
+        <!-- annotations -->
+        <g font-family="Noto Sans TC" font-size="20">
+          <text x="120" y="310" fill="#3B4147" text-anchor="middle">v1.0.0</text>
+          <text x="300" y="170" fill="#3B4147" text-anchor="middle">開發</text>
+          <text x="350" y="170" fill="#3B4147" text-anchor="middle">測試</text>
+          <text x="400" y="170" fill="#3B4147" text-anchor="middle">驗證</text>
+          <text x="440" y="310" fill="#3B4147" text-anchor="middle">merge ✓</text>
+          <text x="660" y="310" fill="#3B4147" text-anchor="middle">v1.0.1</text>
+        </g>
+
+        <!-- side annotations -->
+        <line x1="50" y1="430" x2="120" y2="430" stroke="#0E1116" stroke-width="4"/>
+        <text x="140" y="436" font-family="Noto Sans TC" font-size="18" fill="#3B4147">你日常使用的版本 — 穩定</text>
+        <line x1="50" y1="465" x2="120" y2="465" stroke="oklch(0.58 0.18 255)" stroke-width="4"/>
+        <text x="140" y="471" font-family="Noto Sans TC" font-size="18" fill="#3B4147">隔離環境 — 怎麼改、怎麼壞都不影響你</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">09 / 09 SPOTLIGHTS</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 13 SUMMARY TABLE ========== -->
+<section data-screen-label="13 Summary">
+  <div class="frame-head">
+    <div class="left"><span class="tag">System</span><span class="eyebrow"><span class="dot"></span>這不是一個工具，是一整套作業系統</span></div>
+    <div class="kicker">13 / 22</div>
+  </div>
+
+  <div style="flex:1;display:flex;align-items:center">
+    <table class="summary">
+      <thead>
+        <tr><th>功能</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>四平台匯出</td><td>蝦皮、WACA 電商1、WACA 電商2、91APP 一鍵產出</td></tr>
+        <tr><td>自動定價</td><td>蝦皮定價規則全自動計算，不會出錯</td></tr>
+        <tr><td>圖片管理</td><td>750px 規格化、FTP 上傳、ZIP 打包，一條龍</td></tr>
+        <tr><td>多規格合體</td><td>勾選合併，四平台同步輸出</td></tr>
+        <tr><td>批次套用分類</td><td>一筆設好，幾百筆一秒同步</td></tr>
+        <tr><td>商品說明編輯</td><td>所見即所得的編輯器，免費翻譯 API</td></tr>
+        <tr><td>自動更新</td><td>開機即最新版，零手動操作</td></tr>
+        <tr><td>穩定測試流程</td><td>新功能隔離驗證，不影響正式版</td></tr>
+        <tr><td>欄位驗證</td><td>必填欄位自動檢查，少填會提示</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="foot"><span class="mono">SUMMARY</span><span>AI分享會 · 04.23</span></div>
+</section>
+
+<!-- ========== 14 CLOSING ========== -->
+<section data-screen-label="14 Closing">
+  <div class="frame-head">
+    <div class="left"><span class="tag accent">Closing</span></div>
+    <div class="kicker">15 / 15</div>
+  </div>
+
+  <div class="cols-5-7" style="align-items:center">
+    <div style="display:flex;flex-direction:column;gap:28px;justify-content:center">
+      <div class="h2">
+        它不是買來的，<br>
+        不是套版的——<br>
+        <span class="accent">一點一點刻出來的。</span>
+      </div>
+      <div class="body-lg">從零開始：設計架構、寫程式、測試、部署、維護。<br>九個亮點只是冰山一角。</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:24px;justify-content:center">
+      <!-- commits stat card -->
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:36px">
+        <div class="eyebrow"><span class="dot"></span>Commit history</div>
+        <div style="display:flex;align-items:baseline;gap:24px;margin-top:14px">
+          <div class="num" style="font-size:140px;font-weight:700;line-height:.9;letter-spacing:-.04em;color:var(--accent)">163</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div class="mono" style="font-size:24px;color:var(--ink-mute);letter-spacing:.08em">commits</div>
+            <div class="body" style="font-size:22px;color:var(--ink)">163 個迭代版本——<br>每一個都是一次修正或前進。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- next up card -->
+      <div style="background:#fff;border:1px solid var(--rule);border-radius:14px;padding:28px;display:flex;flex-direction:column;gap:10px">
+        <div class="eyebrow"><span class="dot"></span>Next up · 下一個想做的</div>
+        <div class="h3" style="font-size:44px">露天模板</div>
+        <div class="body" style="font-size:22px">延伸到露天拍賣平台，讓一次編輯覆蓋到五個通路。</div>
+      </div>
+
+      <div class="pills">
+        <span class="pill strong" style="background:var(--accent);border-color:var(--accent)">Questions?</span>
+        <span class="pill">還有很多可以做</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot"><span class="mono">AI 分享會 · 2026.04.23</span><span>Thank you.</span></div>
+</section>
+
+</deck-stage>
+
+</body>
+</html>
